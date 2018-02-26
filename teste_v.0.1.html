@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Testando</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+
+        // limpa o conteudo das divs
+        $("#limpa").click(function(){
+            $(".limpa").empty();
+            $('#limpa').hide();
+            $('#consulta').show();
+        });
+
+        // Evento ativado quando o botão consulta for clicado
+        $("#consulta").click(function() {
+
+          $.ajax({
+            url: 'https://jsonplaceholder.typicode.com/users',
+            dataType: 'json',
+            success: function(dados){
+
+              var email,
+                  site = "<ol>",
+                  qtdHemSul = 0;
+
+              // Percorre o json e acessa os dados através dos objetos
+              $.each(dados, function(i, dado) {
+
+                // Mostrar os websites de todos os usuários
+                site += "<li>" + dado.website + "</li>";
+
+                //  O email da usuária que possui o campo username igual a "Samantha"
+                if (dado.username == "Samantha") {
+                    email = dado.email;
+                }
+
+                // O total de usuarios do Hemisfério Sul
+                if (dado.address.geo.lat < 0) {
+                    qtdHemSul++;
+                }
+
+                $('#consulta').hide();
+                $('#limpa').show();
+              });
+
+              site += "</ol>";
+
+              // Exibe os dados processados nas respectivas divs
+              $('#websites').append("<h3>Sites dos usuários</h3>" + site);
+              $('#email_user').append("<h3>E-mail da Samantha:</h3>"+ email);
+              $('#total_users_hs').append("<h3>Qtd. usuários do Hemisfério Sul</h3>"+ qtdHemSul);
+            }
+          });
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+      <div class="container">
+        <div class="row" style="margin-top: 20px; aling: center;">
+          <button type="button" class="btn btn-danger btn-sm" id="consulta">Consultar</button>
+          <button type="button" class="btn btn-success btn-sm" id="limpa" style="display:none;">Limpar</button>
+        </div>
+        <div class="row">
+          <div class="limpa col-md-4" id="websites"></div>
+          <div class="limpa col-md-4 text-center" id="email_user"></div>
+          <div class="limpa col-md-4 text-center" id="total_users_hs"></div>
+        </div>
+    </div>
+  </body>
+</html>
